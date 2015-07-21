@@ -1,0 +1,20 @@
+#!/bin/bash
+IFS=$'\n'
+
+PACK_PATH="$1"
+MD5_PATH="$2.md5"
+RES_PATH="$2.res"
+
+mkdir -p "$RES_PATH"
+
+for i in `find "$PACK_PATH"`; do
+	md5sum $i | sed "s|$PACK_PATH|\.|" >> "$MD5_PATH"
+done
+
+for LINE in `cat "$MD5_PATH"`; do
+	MD5=`echo "$LINE" | sed 's| .*||'`
+	FILEPATH=`echo "$LINE" | sed 's|[a-f0-9]*  \./||'`
+	
+	echo "$MD5 $FILEPATH"
+	cp "$PACK_PATH/$FILEPATH" "$RES_PATH/$MD5"
+done
